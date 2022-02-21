@@ -21,7 +21,7 @@ import urllib.parse
 
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
-from libs.kodion.gui_manager import GuiManager
+from libs.kodion.gui_manager import *
 from libs.kodion.utils import Utils as kodionUtils
 from libs.utils import utils
 from libs.translations import *
@@ -37,11 +37,20 @@ class HardAberFair:
                         '/Y3JpZDovL3dkci5kZS9oYXJ0IGFiZXIgZmFpcg?pageNumber={pageNumber}&pageSize={' \
                         'pageSize}&embedded=true&seasoned=false&seasonNumber=&withAudiodescription=false' \
                         '&withOriginalWithSubtitle=false&withOriginalversion=false '
-        self._POSTERWIDTH = 480
+
 
         # ADDONTHUMB = utils.translatePath('special://home/addons/' + ADDON_ID + '/resources/assets/icon.png')
-        self._FANART = kodionUtils.translatePath('special://home/addons/' + self._ADDON_ID + '/resources/assets'
-                                                                                             '/fanart.jpg')
+        width = getScreenWidth()
+        if width >= 2160:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/2160p/fanart.jpg'
+        elif width >= 1080:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/1080p/fanart.jpg'
+        else:
+            fanart = f'special://home/addons/{self._ADDON_ID}/resources/assets/720p/fanart.jpg'
+
+        self._FANART = kodionUtils.translatePath(fanart)
+        self._POSTERWIDTH = int(width/3)
+
         self._DEFAULT_IMAGE_URL = ''
 
         self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)

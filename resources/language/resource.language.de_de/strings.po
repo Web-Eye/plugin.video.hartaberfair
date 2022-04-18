@@ -83,3 +83,75 @@ msgstr "Einträge pro Seite"
 msgctxt "#30016"
 msgid "Skip Details-View"
 msgstr "Überspringe Detailansicht"
+
+msgctxt "#30017"
+msgid "Database"
+msgstr "Datenbank"
+
+msgctxt "#30018"
+msgid "enabled"
+msgstr "Aktiviert"
+
+msgctxt "#30019"
+msgid "Host"
+msgstr "Host"
+
+msgctxt "#30020"
+msgid "Port"
+msgstr "Port"
+
+msgctxt "#30021"
+msgid "Username"
+msgstr "Username"
+
+msgctxt "#30022"
+msgid "Password"
+msgstr "Password"
+
+msgctxt "#30023"
+msgid "270p"
+msgstr ""
+
+msgctxt "#30024"
+msgid "360p"
+msgstr ""
+
+msgctxt "#30025"
+msgid "540p"
+msgstr ""
+
+msgctxt "#30026"
+msgid "720p"
+msgstr ""
+
+msgctxt "#30027"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#30028"
+msgid "Best"
+msgstr ""
+msgctxt "#30029"
+msgid "5"
+msgstr ""
+
+msgctxt "#30030"
+msgid "10"
+msgstr ""
+
+msgctxt "#30031"
+msgid "15"
+msgstr ""
+
+msgctxt "#30032"
+msgid "20"
+msgstr ""
+
+msgctxt "#30033"
+msgid "25"
+msgstr ""
+
+msgctxt "#30034"
+msgid "30"
+msgstr ""
+

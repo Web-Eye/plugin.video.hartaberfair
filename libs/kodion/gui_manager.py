@@ -20,6 +20,7 @@ import xbmcgui
 
 import urllib.parse
 
+
 def getScreenHeight():
     return xbmcgui.getScreenHeight()
 

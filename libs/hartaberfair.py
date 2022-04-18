@@ -38,7 +38,6 @@ class HardAberFair:
                         'pageSize}&embedded=true&seasoned=false&seasonNumber=&withAudiodescription=false' \
                         '&withOriginalWithSubtitle=false&withOriginalversion=false '
 
-
         # ADDONTHUMB = utils.translatePath('special://home/addons/' + ADDON_ID + '/resources/assets/icon.png')
         width = getScreenWidth()
         if width >= 2160:
@@ -60,23 +59,10 @@ class HardAberFair:
         addon = Addon(self._ADDON_ID)
         self._t = Translations(addon)
         self._quality_id = int(addon.getSetting('quality'))
-        self._PAGESIZE = {
-            '0': 5,
-            '1': 10,
-            '2': 15,
-            '3': 20,
-            '4': 25,
-            '5': 30
-        }[addon.getSetting('page_itemCount')]
+        self._PAGESIZE = int(addon.getSetting('page_itemCount'))
         self._skip_itemPage = (addon.getSetting('skip_itemPage') == 'true')
         self._suppress_signLanguage = (addon.getSetting('suppress_signLanguage') == 'true')
-        self._suppress_durationSeconds = {
-            '0': 0,
-            '1': 30,
-            '2': 60,
-            '3': 180,
-            '4': 300
-        }[addon.getSetting('suppress_duration')]
+        self._suppress_durationSeconds = int(addon.getSetting('suppress_duration'))
 
     def setItemView(self, url, tag=None):
 
@@ -87,18 +73,19 @@ class HardAberFair:
 
         API = ARDMediathekAPI(url, tag)
         item = API.getItem()
-        title = item['title']
+        if item is not None:
+            title = item['title']
 
-        infoLabels = {
-            'Title': title,
-            'Plot': item['plot'],
-            'Date': item['broadcastedOn'],
-            'Aired': item['broadcastedOn'],
-            'Duration': item['duration']
-        }
+            infoLabels = {
+                'Title': title,
+                'Plot': item['plot'],
+                'Date': item['broadcastedOn'],
+                'Aired': item['broadcastedOn'],
+                'Duration': item['duration']
+            }
 
-        self._guiManager.addItem(title=title, url=item['url'], poster=item['poster'], _type='video',
-                                 infoLabels=infoLabels)
+            self._guiManager.addItem(title=title, url=item['url'], poster=item['poster'], _type='video',
+                                     infoLabels=infoLabels)
 
     def _isValidTeaser(self, teaser):
         if self._suppress_signLanguage and '(mit Gebärdensprache)' in teaser['title']:

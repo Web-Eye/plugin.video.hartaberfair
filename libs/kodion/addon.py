@@ -31,10 +31,10 @@ class Addon(xbmcaddon.Addon):
             return xbmcaddon.Addon.getSetting(self, name)
         else:
             return {
-                'quality': '3',
-                'suppress_signLanguage': 'true',
-                'suppress_duration': '3',
-                'page_itemCount': '3',
+                'quality': '5',
+                'suppress_signLanguage': 'false',
+                'suppress_duration': '300',
+                'page_itemCount': '20',
                 'skip_itemPage': 'true'
             }[name]
 

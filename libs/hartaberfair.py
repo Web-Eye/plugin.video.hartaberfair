@@ -19,6 +19,7 @@ import sys
 import urllib
 import urllib.parse
 
+from libs.database.database_api import DBAPI
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
 from libs.kodion.gui_manager import *
@@ -63,6 +64,17 @@ class HardAberFair:
         self._skip_itemPage = (addon.getSetting('skip_itemPage') == 'true')
         self._suppress_signLanguage = (addon.getSetting('suppress_signLanguage') == 'true')
         self._suppress_durationSeconds = int(addon.getSetting('suppress_duration'))
+
+        self._db_enabled = (addon.getSetting('database_enabled') == 'true')
+        self._db_config = None
+        if self._db_enabled:
+            self._db_config = {
+                'host': addon.getSetting('db_host'),
+                'port': int(addon.getSetting('db_port')),
+                'username': addon.getSetting('db_username'),
+                'password': addon.getSetting('db_password')
+            }
+        t = 0
 
     def setItemView(self, url, tag=None):
 
@@ -129,9 +141,17 @@ class HardAberFair:
         self.setItemView(url, None)
 
     def setHomeView(self, url, tag=None):
-        API = ARDMediathekAPI(url, tag)
-        pagination = API.getPagination()
+
+        if not self._db_enabled:
+            API = ARDMediathekAPI(url, tag)
+        else:
+            tag['quality'] = self._quality_id
+            tag['suppress_signLanguage'] = self._suppress_signLanguage
+            tag['suppress_durationSeconds'] = self._suppress_durationSeconds
+            API = DBAPI(self._db_config, tag)
+
         teasers = API.getTeaser()
+        pagination = API.getPagination()
 
         if teasers is not None:
             for teaser in teasers:

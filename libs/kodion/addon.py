@@ -35,6 +35,11 @@ class Addon(xbmcaddon.Addon):
                 'suppress_signLanguage': 'false',
                 'suppress_duration': '300',
                 'page_itemCount': '20',
-                'skip_itemPage': 'true'
+                'skip_itemPage': 'true',
+                'database_enabled': 'true',
+                'db_host': 'fsnas01',
+                'db_port': '3306',
+                'db_username': 'kodi',
+                'db_password': 'kodi'
             }[name]
 

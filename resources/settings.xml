@@ -34,6 +34,9 @@
             </group>
             <group id="2">
                 <setting id="skip_itemPage" type="boolean" label="30016" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">false</dependency>
+                    </dependencies>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>

@@ -32,12 +32,12 @@ class Addon(xbmcaddon.Addon):
         else:
             return {
                 'quality': '5',
-                'suppress_signLanguage': 'false',
+                'suppress_signLanguage': 'true',
                 'suppress_duration': '300',
                 'page_itemCount': '20',
                 'skip_itemPage': 'true',
                 'database_enabled': 'true',
-                'db_host': 'fsnas01',
+                'db_host': '192.168.132.143',
                 'db_port': '3306',
                 'db_username': 'kodi',
                 'db_password': 'kodi'

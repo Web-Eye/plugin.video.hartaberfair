@@ -1,7 +1,9 @@
+import mysql.connector
+from libs.database.datalayer.dl_items import DL_items
+
 class DBAPI:
 
     def __init__(self, db_config, tag):
-        self._db_config = db_config
         self._teaserCount = 0
         self._pageNumber = 0
         self._pageSize = 20
@@ -22,18 +24,44 @@ class DBAPI:
             if 'suppress_durationSeconds' in tag:
                 self._suppress_durationSeconds = tag.get('suppress_durationSeconds')
 
+        self._cnx = mysql.connector.Connect(**db_config)
+
+    def __del__(self):
+        self._cnx.close()
+
     def getTeaser(self):
-        pass
-    # SELECT * FROM (
-    #
-    # SELECT ROW_NUMBER() OVER (ORDER BY broadcastOn_date DESC) AS rowNumber, viewItems.*
-    #     FROM viewItems
-    #     WHERE project = 'HARTABERFAIR'
-    #
-    # ) AS t
-    # WHERE t.rowNumber BETWEEN 1 AND 20;
+        query = {
+            'project': 'HARTABERFAIR',
+            'quality': self._quality_id,
+            'page': self._pageNumber + 1,
+            'pageSize': self._pageSize,
+            'posterWidth': self._posterWidth
+        }
 
+        if self._suppress_signLanguage:
+            query['tag'] = 'None'
 
+        if self._suppress_durationSeconds:
+            query['minDuration'] = self._suppress_durationSeconds
+
+        return DL_items.getItemView(self._cnx, query)
 
     def getPagination(self):
-        pass
+        query = {
+            'project': 'HARTABERFAIR',
+            'quality': self._quality_id
+        }
+
+        if self._suppress_signLanguage:
+            query['tag'] = 'None'
+
+        if self._suppress_durationSeconds:
+            query['minDuration'] = self._suppress_durationSeconds
+
+        item_count = DL_items.getCount(self._cnx, query)
+
+        return {
+            'pageNumber': self._pageNumber,
+            'pageSize': self._pageSize,
+            'totalElements': item_count
+        }

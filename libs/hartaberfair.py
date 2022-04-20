@@ -71,10 +71,11 @@ class HardAberFair:
             self._db_config = {
                 'host': addon.getSetting('db_host'),
                 'port': int(addon.getSetting('db_port')),
-                'username': addon.getSetting('db_username'),
-                'password': addon.getSetting('db_password')
+                'user': addon.getSetting('db_username'),
+                'password': addon.getSetting('db_password'),
+                'database': 'KodiWebGrabber'
             }
-        t = 0
+            self._skip_itemPage = True
 
     def setItemView(self, url, tag=None):
 
@@ -100,6 +101,9 @@ class HardAberFair:
                                      infoLabels=infoLabels)
 
     def _isValidTeaser(self, teaser):
+        if self._db_enabled:
+            return True
+
         if self._suppress_signLanguage and '(mit Gebärdensprache)' in teaser['title']:
             return False
 
@@ -137,8 +141,22 @@ class HardAberFair:
                                       infoLabels=infoLabels, args=self.buildArgs('item', teaser['url']))
 
     def addClip(self, teaser):
-        url = teaser['url']
-        self.setItemView(url, None)
+        if not self._db_enabled:
+            url = teaser['url']
+            self.setItemView(url, None)
+
+        else:
+            title = teaser['title']
+            infoLabels = {
+                'Title': title,
+                'Plot': teaser['plot'],
+                'Date': teaser['broadcastedOn'],
+                'Aired': teaser['broadcastedOn'],
+                'Duration': teaser['duration']
+            }
+
+            self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
+                                     infoLabels=infoLabels)
 
     def setHomeView(self, url, tag=None):
 

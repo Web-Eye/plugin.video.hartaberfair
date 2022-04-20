@@ -37,7 +37,7 @@ class Addon(xbmcaddon.Addon):
                 'page_itemCount': '20',
                 'skip_itemPage': 'true',
                 'database_enabled': 'true',
-                'db_host': '192.168.132.143',
+                'db_host': 'fsnas01',
                 'db_port': '3306',
                 'db_username': 'kodi',
                 'db_password': 'kodi'

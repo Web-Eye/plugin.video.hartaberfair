@@ -1,6 +1,5 @@
-import mysql.connector
-
 from libs.database.database_core import databaseCore
+from libs.utils import utils
 
 
 class DL_items:
@@ -58,8 +57,8 @@ class DL_items:
                     'title': row[1],
                     'plot': row[2],
                     'poster': row[3].replace('{width}', str(query['posterWidth'])),
-                    'broadcastedOn': row[4],
-                    'availableTo': row[5],
+                    'broadcastedOn': utils.getDateTime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'availableTo': utils.getDateTime(str(row[5]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%SZ'),
                     'duration': row[6],
                     'quality': row[7],
                     'hoster': row[8],
@@ -67,7 +66,6 @@ class DL_items:
                 })
 
         cursor.close()
-
         return items
 
     @staticmethod

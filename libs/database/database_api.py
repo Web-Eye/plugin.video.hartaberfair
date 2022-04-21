@@ -5,6 +5,7 @@ from libs.database.datalayer.dl_items import DL_items
 class DBAPI:
 
     def __init__(self, db_config, tag):
+        self._cnx = None
         self._teaserCount = 0
         self._pageNumber = 0
         self._pageSize = 20
@@ -28,7 +29,9 @@ class DBAPI:
         self._cnx = mysql.connector.Connect(**db_config)
 
     def __del__(self):
-        self._cnx.close()
+        if self._cnx is not None:
+            self._cnx.close()
+
 
     def getTeaser(self):
         query = {

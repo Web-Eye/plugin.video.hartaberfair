@@ -18,6 +18,7 @@ import json
 import sys
 import urllib
 import urllib.parse
+import mysql.connector
 
 from libs.database.database_api import DBAPI
 from libs.kodion.addon import Addon
@@ -58,6 +59,8 @@ class HardAberFair:
 
         # -- Settings -----------------------------------------------
         addon = Addon(self._ADDON_ID)
+        self._addon_name = addon.getAddonInfo('name')
+        self._addon_icon = addon.getAddonInfo('icon')
         self._t = Translations(addon)
         self._quality_id = int(addon.getSetting('quality'))
         self._PAGESIZE = int(addon.getSetting('page_itemCount'))
@@ -166,7 +169,11 @@ class HardAberFair:
             tag['quality'] = self._quality_id
             tag['suppress_signLanguage'] = self._suppress_signLanguage
             tag['suppress_durationSeconds'] = self._suppress_durationSeconds
-            API = DBAPI(self._db_config, tag)
+            try:
+                API = DBAPI(self._db_config, tag)
+            except mysql.connector.Error as e:
+                self._guiManager.setToastNotification(self._addon_name, e.msg, image=self._addon_icon)
+                return
 
         teasers = API.getTeaser()
         pagination = API.getPagination()

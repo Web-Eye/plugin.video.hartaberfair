@@ -28,7 +28,7 @@ class Addon(xbmcaddon.Addon):
 
     def getAddonInfo(self, name):
         if not self._debug:
-            return xbmcaddon.Addon.getAddonInfo(name)
+            return xbmcaddon.Addon.getAddonInfo(self, name)
         else:
             if name == 'name':
                 return 'Hart aber Fair'

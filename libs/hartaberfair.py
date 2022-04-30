@@ -91,12 +91,13 @@ class HardAberFair:
         item = API.getItem()
         if item is not None:
             title = item['title']
+            broadcastedOn = utils.convertDateTime(item['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
 
             infoLabels = {
                 'Title': title,
                 'Plot': item['plot'],
-                'Date': item['broadcastedOn'],
-                'Aired': item['broadcastedOn'],
+                'Date': broadcastedOn,
+                'Aired': broadcastedOn,
                 'Duration': item['duration']
             }
 
@@ -124,19 +125,20 @@ class HardAberFair:
             'seconds': duration + f' {self._t.getString(SECONDS)}',
         }[unit]
 
-        broadcastedOn = utils.getDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ').strftime('%d.%m.%Y, '
-                                                                                                  '%H:%M:%S')
-        availableTo = utils.getDateTime(teaser['availableTo'], '%Y-%m-%dT%H:%M:%SZ').strftime('%d.%m.%Y, '
-                                                                                              '%H:%M:%S')
+        broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%d.%m.%Y, %H:%M:%S')
+        availableTo = utils.convertDateTime(teaser['availableTo'], '%Y-%m-%dT%H:%M:%SZ', '%d.%m.%Y, %H:%M:%S')
+
         plot = f'[B]{title}[/B]\n\n[B]{self._t.getString(DURATION)}[/B]: {duration}\n' \
                f'[B]{self._t.getString(BROADCASTEDON)}[/B]: {broadcastedOn}\n' \
                f'[B]{self._t.getString(AVAILABLETO)}[/B]: {availableTo} '
 
+        broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
+
         infoLabels = {
             'Title': title,
             'Plot': str(plot),
-            'Date': teaser['broadcastedOn'],
-            'Aired': teaser['broadcastedOn'],
+            'Date': broadcastedOn,
+            'Aired': broadcastedOn,
             'Duration': teaser['duration']
         }
 
@@ -150,11 +152,14 @@ class HardAberFair:
 
         else:
             title = teaser['title']
+
+            broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
+
             infoLabels = {
                 'Title': title,
                 'Plot': teaser['plot'],
-                'Date': teaser['broadcastedOn'],
-                'Aired': teaser['broadcastedOn'],
+                'Date': broadcastedOn,
+                'Aired': broadcastedOn,
                 'Duration': teaser['duration']
             }
 

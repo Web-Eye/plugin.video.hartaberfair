@@ -57,12 +57,13 @@ class DL_items:
         parameter += (minItem, maxItem, )
 
         sQuery = f'    SELECT * FROM (' \
-                 f'        SELECT ROW_NUMBER() OVER (ORDER BY broadcastOn_date DESC) AS rowNumber, viewItems.title' \
-                 f'              ,viewItems.plot, viewItems.poster_url, viewItems.broadcastOn_date' \
-                 f'              ,viewItems.availableTo_date, viewItems.duration, viewItems.quality, viewItems.hoster' \
-                 f'              ,viewItems.url' \
-                 f'            FROM viewItems' \
-                 f'            WHERE {innerWhereClause}' \
+                 f'        SELECT ROW_NUMBER() OVER (' \
+                 f'                              ORDER BY order_date DESC, order_id ASC, broadcastOn_date DESC' \
+                 f'              ) AS rowNumber, viewItemLinks.title, viewItemLinks.plot, viewItemLinks.poster_url' \
+                 f'              ,viewItemLinks.broadcastOn_date, viewItemLinks.availableTo_date, viewItemLinks.duration' \
+                 f'              ,viewItemLinks.quality, viewItemLinks.hoster, viewItemLinks.url' \
+                 f'        FROM viewItemLinks' \
+                 f'        WHERE {innerWhereClause}' \
                  f'    ) AS t' \
                  f'    WHERE t.rowNumber BETWEEN %s AND %s;'
 
@@ -115,7 +116,7 @@ class DL_items:
             whereClause += ' AND quality = %s'
             parameter += ('270p',)
 
-        sQuery = f'SELECT COUNT(*) FROM viewItems WHERE {whereClause};'
+        sQuery = f'SELECT COUNT(*) FROM viewItemLinks WHERE {whereClause};'
 
         return databaseCore.executeScalar(cnx, sQuery, parameter)
 

@@ -49,7 +49,6 @@ class DBAPI:
         if self._cnx is not None:
             self._cnx.close()
 
-
     def getTeaser(self):
         query = {
             'project': 'HARTABERFAIR',

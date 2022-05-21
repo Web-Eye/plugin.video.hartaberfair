@@ -83,7 +83,7 @@ class DL_items:
                     'url': row[9]
                 })
 
-        cursor.close()
+            cursor.close()
         return items
 
     @staticmethod

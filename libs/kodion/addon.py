@@ -22,8 +22,8 @@ import xbmcaddon
 
 class Addon(xbmcaddon.Addon):
 
-    def __init__(self, id):
-        xbmcaddon.Addon.__init__(self, id)
+    def __init__(self, _id):
+        xbmcaddon.Addon.__init__(self, _id)
         self._debug = os.getenv('kodi_debug') is not None
 
     def getAddonInfo(self, name):
@@ -46,9 +46,8 @@ class Addon(xbmcaddon.Addon):
                 'page_itemCount': '20',
                 'skip_itemPage': 'true',
                 'database_enabled': 'true',
-                'db_host': '192.168.132.143',
+                'db_host': 'fsnas01',
                 'db_port': '3306',
                 'db_username': 'kodi',
                 'db_password': 'kodi'
             }[name]
-

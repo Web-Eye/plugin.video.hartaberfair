@@ -51,4 +51,3 @@ class utils:
 
         except ValueError:
             return None
-

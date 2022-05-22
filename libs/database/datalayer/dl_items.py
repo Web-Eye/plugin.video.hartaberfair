@@ -60,8 +60,9 @@ class DL_items:
                  f'        SELECT ROW_NUMBER() OVER (' \
                  f'                              ORDER BY order_date DESC, order_id ASC, broadcastOn_date DESC' \
                  f'              ) AS rowNumber, viewItemLinks.title, viewItemLinks.plot, viewItemLinks.poster_url' \
-                 f'              ,viewItemLinks.broadcastOn_date, viewItemLinks.availableTo_date, viewItemLinks.duration' \
-                 f'              ,viewItemLinks.quality, viewItemLinks.hoster, viewItemLinks.url' \
+                 f'              ,viewItemLinks.broadcastOn_date, viewItemLinks.availableTo_date' \
+                 f'              ,viewItemLinks.duration, viewItemLinks.quality, viewItemLinks.hoster' \
+                 f'              ,viewItemLinks.url' \
                  f'        FROM viewItemLinks' \
                  f'        WHERE {innerWhereClause}' \
                  f'    ) AS t' \
@@ -119,5 +120,3 @@ class DL_items:
         sQuery = f'SELECT COUNT(*) FROM viewItemLinks WHERE {whereClause};'
 
         return databaseCore.executeScalar(cnx, sQuery, parameter)
-
-

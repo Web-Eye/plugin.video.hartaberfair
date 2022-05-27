@@ -51,7 +51,6 @@ class HardAberFair:
 
         self._FANART = kodionUtils.translatePath(fanart)
         self._POSTERWIDTH = int(width/3)
-
         self._DEFAULT_IMAGE_URL = ''
 
         self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)

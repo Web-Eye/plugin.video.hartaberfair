@@ -21,6 +21,7 @@ AVAILABLETO = 'availableto'
 HOURS = 'hours'
 MINUTES = 'minutes'
 SECONDS = 'seconds'
+REFRESH = 'Refresh'
 
 
 class Translations:
@@ -36,5 +37,6 @@ class Translations:
             AVAILABLETO:       self._language(30102),
             HOURS:             self._language(30103),
             MINUTES:           self._language(30104),
-            SECONDS:           self._language(30105)
+            SECONDS:           self._language(30105),
+            REFRESH:           self._language(30107)
         }[name]

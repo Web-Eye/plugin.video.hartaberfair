@@ -79,7 +79,10 @@ class HardAberFair:
             }
             self._skip_itemPage = True
 
-    def setItemView(self, url, tag=None):
+    def refreshItem(self, url, pageNumber=None):
+        self._guiManager.setToastNotification(self._addon_name, 'NOT IMPLEMENTED, yet! ;)', image=self._addon_icon)
+
+    def setItemView(self, url, pageNumber=None):
 
         tag = {
             'posterWidth': self._POSTERWIDTH,
@@ -162,17 +165,29 @@ class HardAberFair:
                 'Duration': teaser['duration']
             }
 
-            self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
-                                     infoLabels=infoLabels)
+            contextMenu = None
+            if self._db_enabled:
+                contextMenu = [(self._t.getString(REFRESH), f'RunPlugin(plugin://{self._ADDON_ID}/?method=refresh)', )]
 
-    def setHomeView(self, url, tag=None):
+            self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
+                                     infoLabels=infoLabels, contextMenu=contextMenu)
+
+    def setHomeView(self, url, pageNumber=None):
+        if pageNumber is None:
+            pageNumber = 0
+
+        tag = {
+            'quality': self._quality_id,
+            'suppress_signLanguage': self._suppress_signLanguage,
+            'suppress_durationSeconds': self._suppress_durationSeconds,
+            'pageSize': self._PAGESIZE,
+            'posterWidth': self._POSTERWIDTH,
+            'pageNumber': pageNumber
+        }
 
         if not self._db_enabled:
             API = ARDMediathekAPI(url, tag)
         else:
-            tag['quality'] = self._quality_id
-            tag['suppress_signLanguage'] = self._suppress_signLanguage
-            tag['suppress_durationSeconds'] = self._suppress_durationSeconds
             try:
                 API = DBAPI(self._db_config, tag)
             except mysql.connector.Error as e:
@@ -214,7 +229,7 @@ class HardAberFair:
         return args
 
     @staticmethod
-    def buildArgs(method, url=None, tag=None):
+    def buildArgs(method, url=None, pageNumber=None):
 
         item = {
             'method': method,
@@ -223,8 +238,8 @@ class HardAberFair:
         if url is not None:
             item['url'] = url
 
-        if tag is not None:
-            item['tag'] = tag
+        if pageNumber is not None:
+            item['pageNumber'] = pageNumber
 
         return item
 
@@ -232,25 +247,19 @@ class HardAberFair:
 
         args = self.get_query_args(sys.argv[2])
         if args is None or args.__len__() == 0:
-            tag = {
-                'pageNumber': 0,
-                'pageSize': self._PAGESIZE,
-                'posterWidth': self._POSTERWIDTH
-            }
-
-            args = self.buildArgs('home', self._BASEURL, tag)
+            args = self.buildArgs(method='home', url=self._BASEURL)
 
         method = args.get('method')
         url = args.get('url')
-        tag = args.get('tag')
-
-        if tag is not None and isinstance(tag, str):
-            tag = json.loads(tag)
+        pageNumber = None
+        if 'pageNumber' in args:
+            pageNumber = args.get('pageNumber')
 
         {
             'home': self.setHomeView,
-            'item': self.setItemView
-        }[method](url, tag)
+            'item': self.setItemView,
+            'refresh': self.refreshItem
+        }[method](url, pageNumber)
 
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_NONE)
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_DATE)

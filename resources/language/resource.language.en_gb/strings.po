@@ -44,6 +44,10 @@ msgctxt "#30106"
 msgid "Main"
 msgstr ""
 
+msgctxt "#30107"
+msgid "Refresh"
+msgstr ""
+
 msgctxt "#30007"
 msgid "Preferred Quality"
 msgstr ""

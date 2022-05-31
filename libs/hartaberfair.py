@@ -184,7 +184,7 @@ class HardAberFair:
 
         if teasers is not None:
             for teaser in teasers:
-                if self._isValidTeaser(teaser):
+                if self._db_enabled or self._isValidTeaser(teaser):
                     {
                         False: self.addItemPage,
                         True: self.addClip

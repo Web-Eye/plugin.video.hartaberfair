@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
     id="plugin.video.hartaberfair"
-    version="2.0.2+Beta"
+    version="2.0.2"
     name="Hart aber Fair"
     provider-name="WebEye">
   <requires>

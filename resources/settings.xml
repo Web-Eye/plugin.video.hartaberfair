@@ -1,11 +1,118 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-  <category label="30106">
-    <setting id="quality" type="enum" label="30007" values="270p|360p|540p|720p" default="3"/>
-    <setting id="page_itemCount" type="enum" label="30015" values="5|10|15|20|25|30" default="3"/>
-    <setting type="sep"/>
-    <setting id="skip_itemPage" type="bool" label="30016" default="false"/>
-    <setting id="suppress_signLanguage" type="bool" label="30008" default="false"/>
-    <setting id="suppress_duration" type="select" label="30009" lvalues="30010|30011|30012|30013|30014" default="0"/>
-  </category>
+<settings version="1">
+    <section id="plugin.video.hartaberfair">
+        <category id="main" label="30106">
+            <group id="1">
+                <setting id="quality" label="30007" type="integer" >
+                    <default>3</default>
+                    <constraints>
+                        <options>
+                            <option label="30023">0</option>
+                            <option label="30024">1</option>
+                            <option label="30025">2</option>
+                            <option label="30026">3</option>
+                            <option label="30027">4</option>
+                            <option label="30028">5</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="integer"/>
+                </setting>
+                <setting id="page_itemCount" label="30015" type="integer">
+                    <default>20</default>
+                    <constraints>
+                        <options>
+                            <option label="30029">5</option>
+                            <option label="30030">10</option>
+                            <option label="30031">15</option>
+                            <option label="30032">20</option>
+                            <option label="30033">25</option>
+                            <option label="30034">30</option>
+                        </options>
+                    </constraints>
+                    <control type="spinner" format="integer"/>
+                </setting>
+            </group>
+            <group id="2">
+                <setting id="skip_itemPage" type="boolean" label="30016" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">false</dependency>
+                    </dependencies>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="suppress_signLanguage" type="boolean" label="30008" help="">
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="suppress_duration" label="30009" type="integer">
+                    <default>0</default>
+                    <constraints>
+                        <options>
+                            <option label="30010">0</option>
+                            <option label="30011">30</option>
+                            <option label="30012">60</option>
+                            <option label="30013">180</option>
+                            <option label="30014">300</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="integer"/>
+                </setting>
+            </group>
+        </category>
+        <category id="database" label="30017">
+            <group id="3">
+                <setting id="database_enabled" type="boolean" label="30018" help="">
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="4">
+                <setting id="db_host" type="string" label="30019" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">true</dependency>
+                    </dependencies>
+                    <default>192.168.132.1</default>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="ip">
+                        <heading>30019</heading>
+                    </control>
+                </setting>
+                <setting id="db_port" type="integer" label="30020" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">true</dependency>
+                    </dependencies>
+                    <default>3306</default>
+                    <control type="edit" format="integer">
+                        <heading>30020</heading>
+                    </control>
+                </setting>
+                <setting id="db_username" type="string" label="30021" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">true</dependency>
+                    </dependencies>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>30021</heading>
+                    </control>
+                </setting>
+                <setting id="db_password" type="string" label="30022" help="">
+                    <dependencies>
+                        <dependency type="enable" setting="database_enabled">true</dependency>
+                    </dependencies>
+                    <default/>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>30022</heading>
+                        <hidden>true</hidden>
+                    </control>
+                </setting>
+            </group>
+        </category>
+    </section>
 </settings>

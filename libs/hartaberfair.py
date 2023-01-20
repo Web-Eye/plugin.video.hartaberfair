@@ -18,7 +18,9 @@ import json
 import sys
 import urllib
 import urllib.parse
+import mysql.connector
 
+from libs.database.database_api import DBAPI
 from libs.kodion.addon import Addon
 from libs.ardmediathek_api import ARDMediathekAPI
 from libs.kodion.gui_manager import *
@@ -38,7 +40,6 @@ class HardAberFair:
                         'pageSize}&embedded=true&seasoned=false&seasonNumber=&withAudiodescription=false' \
                         '&withOriginalWithSubtitle=false&withOriginalversion=false '
 
-
         # ADDONTHUMB = utils.translatePath('special://home/addons/' + ADDON_ID + '/resources/assets/icon.png')
         width = getScreenWidth()
         if width >= 2160:
@@ -50,7 +51,6 @@ class HardAberFair:
 
         self._FANART = kodionUtils.translatePath(fanart)
         self._POSTERWIDTH = int(width/3)
-
         self._DEFAULT_IMAGE_URL = ''
 
         self._guiManager = GuiManager(sys.argv[1], self._ADDON_ID, self._DEFAULT_IMAGE_URL, self._FANART)
@@ -58,27 +58,31 @@ class HardAberFair:
 
         # -- Settings -----------------------------------------------
         addon = Addon(self._ADDON_ID)
+        self._addon_name = addon.getAddonInfo('name')
+        self._addon_icon = addon.getAddonInfo('icon')
         self._t = Translations(addon)
         self._quality_id = int(addon.getSetting('quality'))
-        self._PAGESIZE = {
-            '0': 5,
-            '1': 10,
-            '2': 15,
-            '3': 20,
-            '4': 25,
-            '5': 30
-        }[addon.getSetting('page_itemCount')]
+        self._PAGESIZE = int(addon.getSetting('page_itemCount'))
         self._skip_itemPage = (addon.getSetting('skip_itemPage') == 'true')
         self._suppress_signLanguage = (addon.getSetting('suppress_signLanguage') == 'true')
-        self._suppress_durationSeconds = {
-            '0': 0,
-            '1': 30,
-            '2': 60,
-            '3': 180,
-            '4': 300
-        }[addon.getSetting('suppress_duration')]
+        self._suppress_durationSeconds = int(addon.getSetting('suppress_duration'))
 
-    def setItemView(self, url, tag=None):
+        self._db_enabled = (addon.getSetting('database_enabled') == 'true')
+        self._db_config = None
+        if self._db_enabled:
+            self._db_config = {
+                'host': addon.getSetting('db_host'),
+                'port': int(addon.getSetting('db_port')),
+                'user': addon.getSetting('db_username'),
+                'password': addon.getSetting('db_password'),
+                'database': 'KodiWebGrabber_Test'
+            }
+            self._skip_itemPage = True
+
+    def refreshItem(self, url, pageNumber=None):
+        self._guiManager.setToastNotification(self._addon_name, 'NOT IMPLEMENTED, yet! ;)', image=self._addon_icon)
+
+    def setItemView(self, url, pageNumber=None):
 
         tag = {
             'posterWidth': self._POSTERWIDTH,
@@ -87,20 +91,25 @@ class HardAberFair:
 
         API = ARDMediathekAPI(url, tag)
         item = API.getItem()
-        title = item['title']
+        if item is not None:
+            title = item['title']
+            broadcastedOn = utils.convertDateTime(item['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
 
-        infoLabels = {
-            'Title': title,
-            'Plot': item['plot'],
-            'Date': item['broadcastedOn'],
-            'Aired': item['broadcastedOn'],
-            'Duration': item['duration']
-        }
+            infoLabels = {
+                'Title': title,
+                'Plot': item['plot'],
+                'Date': broadcastedOn,
+                'Aired': broadcastedOn,
+                'Duration': item['duration']
+            }
 
-        self._guiManager.addItem(title=title, url=item['url'], poster=item['poster'], _type='video',
-                                 infoLabels=infoLabels)
+            self._guiManager.addItem(title=title, url=item['url'], poster=item['poster'], _type='video',
+                                     infoLabels=infoLabels)
 
     def _isValidTeaser(self, teaser):
+        if self._db_enabled:
+            return True
+
         if self._suppress_signLanguage and '(mit Gebärdensprache)' in teaser['title']:
             return False
 
@@ -118,19 +127,20 @@ class HardAberFair:
             'seconds': duration + f' {self._t.getString(SECONDS)}',
         }[unit]
 
-        broadcastedOn = utils.getDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ').strftime('%d.%m.%Y, '
-                                                                                                  '%H:%M:%S')
-        availableTo = utils.getDateTime(teaser['availableTo'], '%Y-%m-%dT%H:%M:%SZ').strftime('%d.%m.%Y, '
-                                                                                              '%H:%M:%S')
+        broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%d.%m.%Y, %H:%M:%S')
+        availableTo = utils.convertDateTime(teaser['availableTo'], '%Y-%m-%dT%H:%M:%SZ', '%d.%m.%Y, %H:%M:%S')
+
         plot = f'[B]{title}[/B]\n\n[B]{self._t.getString(DURATION)}[/B]: {duration}\n' \
                f'[B]{self._t.getString(BROADCASTEDON)}[/B]: {broadcastedOn}\n' \
                f'[B]{self._t.getString(AVAILABLETO)}[/B]: {availableTo} '
 
+        broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
+
         infoLabels = {
             'Title': title,
             'Plot': str(plot),
-            'Date': teaser['broadcastedOn'],
-            'Aired': teaser['broadcastedOn'],
+            'Date': broadcastedOn,
+            'Aired': broadcastedOn,
             'Duration': teaser['duration']
         }
 
@@ -138,17 +148,58 @@ class HardAberFair:
                                       infoLabels=infoLabels, args=self.buildArgs('item', teaser['url']))
 
     def addClip(self, teaser):
-        url = teaser['url']
-        self.setItemView(url, None)
+        if not self._db_enabled:
+            url = teaser['url']
+            self.setItemView(url, None)
 
-    def setHomeView(self, url, tag=None):
-        API = ARDMediathekAPI(url, tag)
-        pagination = API.getPagination()
+        else:
+            title = teaser['title']
+
+            broadcastedOn = utils.convertDateTime(teaser['broadcastedOn'], '%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%d')
+
+            infoLabels = {
+                'Title': title,
+                'Plot': teaser['plot'],
+                'Date': broadcastedOn,
+                'Aired': broadcastedOn,
+                'Duration': teaser['duration']
+            }
+
+            contextMenu = None
+            if self._db_enabled:
+                contextMenu = [(self._t.getString(REFRESH), f'RunPlugin(plugin://{self._ADDON_ID}/?method=refresh)', )]
+
+            self._guiManager.addItem(title=title, url=teaser['url'], poster=teaser['poster'], _type='video',
+                                     infoLabels=infoLabels, contextMenu=contextMenu)
+
+    def setHomeView(self, url, pageNumber=None):
+        if pageNumber is None:
+            pageNumber = 0
+
+        tag = {
+            'quality': self._quality_id,
+            'suppress_signLanguage': self._suppress_signLanguage,
+            'suppress_durationSeconds': self._suppress_durationSeconds,
+            'pageSize': self._PAGESIZE,
+            'posterWidth': self._POSTERWIDTH,
+            'pageNumber': pageNumber
+        }
+
+        if not self._db_enabled:
+            API = ARDMediathekAPI(url, tag)
+        else:
+            try:
+                API = DBAPI(self._db_config, tag)
+            except mysql.connector.Error as e:
+                self._guiManager.setToastNotification(self._addon_name, e.msg, image=self._addon_icon)
+                return
+
         teasers = API.getTeaser()
+        pagination = API.getPagination()
 
         if teasers is not None:
             for teaser in teasers:
-                if self._isValidTeaser(teaser):
+                if self._db_enabled or self._isValidTeaser(teaser):
                     {
                         False: self.addItemPage,
                         True: self.addClip
@@ -178,7 +229,7 @@ class HardAberFair:
         return args
 
     @staticmethod
-    def buildArgs(method, url=None, tag=None):
+    def buildArgs(method, url=None, pageNumber=None):
 
         item = {
             'method': method,
@@ -187,8 +238,8 @@ class HardAberFair:
         if url is not None:
             item['url'] = url
 
-        if tag is not None:
-            item['tag'] = tag
+        if pageNumber is not None:
+            item['pageNumber'] = pageNumber
 
         return item
 
@@ -196,25 +247,19 @@ class HardAberFair:
 
         args = self.get_query_args(sys.argv[2])
         if args is None or args.__len__() == 0:
-            tag = {
-                'pageNumber': 0,
-                'pageSize': self._PAGESIZE,
-                'posterWidth': self._POSTERWIDTH
-            }
-
-            args = self.buildArgs('home', self._BASEURL, tag)
+            args = self.buildArgs(method='home', url=self._BASEURL)
 
         method = args.get('method')
         url = args.get('url')
-        tag = args.get('tag')
-
-        if tag is not None and isinstance(tag, str):
-            tag = json.loads(tag)
+        pageNumber = None
+        if 'pageNumber' in args:
+            pageNumber = args.get('pageNumber')
 
         {
             'home': self.setHomeView,
-            'item': self.setItemView
-        }[method](url, tag)
+            'item': self.setItemView,
+            'refresh': self.refreshItem
+        }[method](url, pageNumber)
 
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_NONE)
         # self._guiManager.addSortMethod(GuiManager.SORT_METHOD_DATE)

@@ -16,25 +16,37 @@
 #
 
 import os
-
 import xbmcaddon
 
 
 class Addon(xbmcaddon.Addon):
 
-    def __init__(self, id):
-        xbmcaddon.Addon.__init__(self, id)
+    def __init__(self, _id):
+        xbmcaddon.Addon.__init__(self, _id)
         self._debug = os.getenv('kodi_debug') is not None
+
+    def getAddonInfo(self, name):
+        if not self._debug:
+            return xbmcaddon.Addon.getAddonInfo(self, name)
+        else:
+            if name == 'name':
+                return 'Hart aber Fair'
+            elif name == 'icon':
+                return None
 
     def getSetting(self, name):
         if not self._debug:
             return xbmcaddon.Addon.getSetting(self, name)
         else:
             return {
-                'quality': '3',
+                'quality': '5',
                 'suppress_signLanguage': 'true',
-                'suppress_duration': '3',
-                'page_itemCount': '3',
-                'skip_itemPage': 'true'
+                'suppress_duration': '0',
+                'page_itemCount': '20',
+                'skip_itemPage': 'true',
+                'database_enabled': 'true',
+                'db_host': 'fsnas01',
+                'db_port': '3306',
+                'db_username': 'kodi',
+                'db_password': 'kodi'
             }[name]
-

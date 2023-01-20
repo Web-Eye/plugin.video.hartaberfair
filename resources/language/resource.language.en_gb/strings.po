@@ -44,6 +44,10 @@ msgctxt "#30106"
 msgid "Main"
 msgstr ""
 
+msgctxt "#30107"
+msgid "Refresh"
+msgstr ""
+
 msgctxt "#30007"
 msgid "Preferred Quality"
 msgstr ""
@@ -82,4 +86,76 @@ msgstr ""
 
 msgctxt "#30016"
 msgid "Skip Details-View"
+msgstr ""
+
+msgctxt "#30017"
+msgid "Database"
+msgstr ""
+
+msgctxt "#30018"
+msgid "enabled"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Host"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Port"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Username"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Password"
+msgstr ""
+
+msgctxt "#30023"
+msgid "270p"
+msgstr ""
+
+msgctxt "#30024"
+msgid "360p"
+msgstr ""
+
+msgctxt "#30025"
+msgid "540p"
+msgstr ""
+
+msgctxt "#30026"
+msgid "720p"
+msgstr ""
+
+msgctxt "#30027"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#30028"
+msgid "Best"
+msgstr ""
+
+msgctxt "#30029"
+msgid "5"
+msgstr ""
+
+msgctxt "#30030"
+msgid "10"
+msgstr ""
+
+msgctxt "#30031"
+msgid "15"
+msgstr ""
+
+msgctxt "#30032"
+msgid "20"
+msgstr ""
+
+msgctxt "#30033"
+msgid "25"
+msgstr ""
+
+msgctxt "#30034"
+msgid "30"
 msgstr ""

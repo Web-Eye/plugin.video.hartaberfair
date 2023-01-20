@@ -17,8 +17,10 @@
 
 import xbmcplugin
 import xbmcgui
+import xbmc
 
 import urllib.parse
+
 
 def getScreenHeight():
     return xbmcgui.getScreenHeight()
@@ -46,7 +48,7 @@ class GuiManager:
     def setContent(self, content):
         xbmcplugin.setContent(self._argv, content)
 
-    def __setEntity(self, title, url, art, _property, _type, infolabels, isFolder):
+    def __setEntity(self, title, url, art, _property, _type, infolabels, contextMenu, isFolder):
         li = xbmcgui.ListItem(str(title))
         if art is not None:
             li.setArt(art)
@@ -58,9 +60,12 @@ class GuiManager:
         if _type is not None and infolabels is not None:
             li.setInfo(type=_type, infoLabels=infolabels)
 
+        if contextMenu is not None and len(contextMenu) > 0:
+            li.addContextMenuItems(contextMenu)
+
         xbmcplugin.addDirectoryItem(handle=self._argv, url=url, listitem=li, isFolder=isFolder)
 
-    def addDirectory(self, title, poster=None, fanArt=None, _type=None, infoLabels=None, args=None):
+    def addDirectory(self, title, poster=None, fanArt=None, _type=None, infoLabels=None, contextMenu=None, args=None):
         art = {}
         _property = {}
 
@@ -75,9 +80,9 @@ class GuiManager:
             _property['Fanart_Image'] = self._fanart
 
         url = 'plugin://' + self._addon_id + '/?' + urllib.parse.urlencode(args)
-        self.__setEntity(title, url, art, _property, _type, infoLabels, True)
+        self.__setEntity(title, url, art, _property, _type, infoLabels, contextMenu, True)
 
-    def addItem(self, title, url, poster=None, fanArt=None, _type=None, infoLabels=None):
+    def addItem(self, title, url, poster=None, fanArt=None, _type=None, infoLabels=None, contextMenu=None):
         art = {}
         _property = {}
 
@@ -93,10 +98,14 @@ class GuiManager:
 
         _property['IsPlayable'] = 'true'
 
-        self.__setEntity(title, url, art, _property, _type, infoLabels, False)
+        self.__setEntity(title, url, art, _property, _type, infoLabels, contextMenu, False)
 
     def addSortMethod(self, sortMethod):
         xbmcplugin.addSortMethod(self._argv, sortMethod)
 
     def endOfDirectory(self):
         xbmcplugin.endOfDirectory(self._argv)
+
+    @staticmethod
+    def setToastNotification(header, message, time=5000, image=None):
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)' % (header, message, time, image))

@@ -36,3 +36,18 @@ class utils:
     @staticmethod
     def getDateTime(strDateTime, strFormat):
         return datetime(*(time.strptime(strDateTime, strFormat)[0:6]))
+
+    @staticmethod
+    def datetimeToString(dt, dstFormat):
+        return dt.strftime(dstFormat)
+
+    @staticmethod
+    def convertDateTime(strDateTime, srcFormat, dstFormat):
+
+        try:
+            dt = utils.getDateTime(strDateTime, srcFormat)
+            if dt is not None:
+                return dt.strftime(dstFormat)
+
+        except ValueError:
+            return None

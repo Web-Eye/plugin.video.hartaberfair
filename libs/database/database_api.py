@@ -53,7 +53,7 @@ class DBAPI:
         query = {
             'project': 'HARTABERFAIR',
             'quality': self._quality_id,
-            'page': self._pageNumber + 1,
+            'page': int(self._pageNumber) + 1,
             'pageSize': self._pageSize,
             'posterWidth': self._posterWidth
         }

@@ -212,13 +212,16 @@ class HardAberFair:
 
                 if totalElements > ((pageNumber + 1) * pageSize):
                     strPageNumber = str(pageNumber + 2)
-                    tag = {
-                        'pageNumber': pageNumber + 1,
-                        'pageSize': self._PAGESIZE,
-                        'posterWidth': self._POSTERWIDTH
-                    }
+                    # tag = {
+                    #     'pageNumber': pageNumber + 1,
+                    #     'pageSize': self._PAGESIZE,
+                    #     'posterWidth': self._POSTERWIDTH
+                    # }
+                    # self._guiManager.addDirectory(title=f'Page {strPageNumber}',
+                    #                               args=self.buildArgs('home', self._BASEURL, json.dumps(tag)))
+
                     self._guiManager.addDirectory(title=f'Page {strPageNumber}',
-                                                  args=self.buildArgs('home', self._BASEURL, json.dumps(tag)))
+                                                  args=self.buildArgs('home', url=self._BASEURL, pageNumber=pageNumber + 1))
 
     @staticmethod
     def get_query_args(s_args):

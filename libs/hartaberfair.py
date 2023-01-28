@@ -75,7 +75,7 @@ class HardAberFair:
                 'port': int(addon.getSetting('db_port')),
                 'user': addon.getSetting('db_username'),
                 'password': addon.getSetting('db_password'),
-                'database': 'KodiWebGrabber_Test'
+                'database': addon.getSetting('db_databasename')
             }
             self._skip_itemPage = True
 
